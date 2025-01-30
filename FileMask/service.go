@@ -1,4 +1,4 @@
-package Service
+package FileMask
 
 import (
 	"bufio"
@@ -59,6 +59,7 @@ func NewPresenter(adress string) *Present {
 	return &Present{Adress: adress}
 }
 func (p Present) Present(s []string) error {
+	fmt.Println(p.Adress)
 	file, err := os.Create(p.Adress)
 
 	if err != nil {
@@ -83,10 +84,11 @@ func NewService(prod Producer, pres Presenter) *Service {
 }
 
 func (s *Service) Mask(data []byte) string {
+	var prefix string = "http://"
 	for i := range data {
-		if i < len(data)-7 && string(data[i:i+7]) == "http://" {
-			for i < len(data)-7 && (data[i+7] != 32 && data[i+7] != 44) {
-				data[i+7] = 42
+		if i < len(data)-len(prefix) && string(data[i:i+len(prefix)]) == prefix {
+			for i < len(data)-len(prefix) && (data[i+len(prefix)] != 32) {
+				data[i+len(prefix)] = 42
 				i++
 			}
 		}
